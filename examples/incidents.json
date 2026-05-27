@@ -1,0 +1,34 @@
+[
+  {
+    "id": "INC-1042",
+    "service": "checkout-api",
+    "severity": "critical",
+    "status": "investigating",
+    "summary": "Payment authorisations timing out above threshold",
+    "minutes_open": 18
+  },
+  {
+    "id": "INC-1038",
+    "service": "catalog-search",
+    "severity": "high",
+    "status": "monitoring",
+    "summary": "Search latency elevated in one region",
+    "minutes_open": 46
+  },
+  {
+    "id": "INC-1034",
+    "service": "warehouse-sync",
+    "severity": "medium",
+    "status": "identified",
+    "summary": "Inventory updates delayed for a subset of stores",
+    "minutes_open": 61
+  },
+  {
+    "id": "INC-1021",
+    "service": "notification-worker",
+    "severity": "low",
+    "status": "resolved",
+    "summary": "Email delivery queue recovered",
+    "minutes_open": 33
+  }
+]

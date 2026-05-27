@@ -1,145 +1,75 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,100:16213e&height=200&section=header&text=KAME&fontSize=80&fontColor=00d4ff&animation=fadeIn&fontAlignY=38&desc=Autonomous%20AI%20Agent%20Framework&descAlignY=56&descAlign=50" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:164e63&height=190&section=header&text=KAME&fontSize=72&fontColor=67e8f9&animation=fadeIn&fontAlignY=39&desc=Auditable%20Operations%20Workflow%20Demo&descAlignY=57" width="100%"/>
 </div>
 
 <div align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=18&duration=2500&pause=800&color=00D4FF&center=true&vCenter=true&width=600&lines=Reasoning+%E2%86%92+Planning+%E2%86%92+Acting;Multi-step+task+execution;Tool+calling+%26+memory+management;Built+with+Python+%26+LLMs" alt="Typing SVG"/>
+  <img src="https://img.shields.io/badge/Workflow-Executable-0891B2?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Public%20Code-Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Inputs-Synthetic%20Only-334155?style=for-the-badge"/>
 </div>
 
-<br/>
+## Problem
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Estado-En_Desarrollo-orange?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/LLM_Powered-✓-00d4ff?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Licencia-Privada-red?style=for-the-badge"/>
-</div>
+Operational teams need concise incident briefings without losing the evidence behind them. KAME is a public, bounded workflow demo that turns a local incident dataset into a prioritised Markdown briefing and a machine-readable execution trace.
 
----
+This repository does not claim to be an autonomous LLM agent. It demonstrates the deterministic orchestration, tool boundaries and traceability that a broader private automation project can build upon.
 
-## ¿Qué es KAME?
+## What I Built
 
-**KAME** es un framework de agentes IA autónomos desarrollado desde cero en Python. Su nombre hace referencia al concepto de perseverancia y método — avanza despacio pero no se detiene.
+- A Python workflow agent with an explicit three-step plan.
+- A validated synthetic incident source under `examples/`.
+- Real tools for loading data, prioritising active incidents and writing a report.
+- A JSON trace containing every executed step and its result.
+- Unit tests and a GitHub Actions verification workflow.
 
-A diferencia de otros agentes, KAME no depende de un único proveedor de LLM: está diseñado para ser **agnóstico al modelo**, pudiendo operar con OpenAI, Anthropic, modelos locales u otros proveedores.
+## Run Locally
 
----
+No API keys or third-party packages are required.
 
-## ✨ Capacidades
-
-| Capacidad | Descripción |
-|---|---|
-| 🧠 **Razonamiento** | Descompone tareas complejas en pasos ejecutables |
-| 🔧 **Tool Calling** | Ejecuta herramientas externas: búsqueda, código, APIs |
-| 💾 **Memoria** | Mantiene contexto a corto y largo plazo entre sesiones |
-| 🔁 **Auto-corrección** | Detecta errores en sus respuestas y se auto-corrige |
-| 🌐 **Multi-LLM** | Compatible con OpenAI, Anthropic, Ollama y otros |
-| 📋 **Planificación** | Genera y ejecuta planes de acción paso a paso |
-
----
-
-## 🏗️ Arquitectura
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                      KAME CORE                          │
-│                                                         │
-│  ┌──────────┐    ┌──────────┐    ┌──────────────────┐  │
-│  │  INPUT   │───▶│ PLANNER  │───▶│   TASK QUEUE     │  │
-│  │ Handler  │    │  Module  │    │                  │  │
-│  └──────────┘    └──────────┘    └────────┬─────────┘  │
-│                                           │             │
-│  ┌──────────────────────────────────────  ▼  ────────┐  │
-│  │                  EXECUTOR                         │  │
-│  │                                                   │  │
-│  │   ┌──────────┐  ┌──────────┐  ┌──────────────┐   │  │
-│  │   │   TOOL   │  │  CODE    │  │   MEMORY     │   │  │
-│  │   │ Calling  │  │ Runner   │  │   Manager    │   │  │
-│  │   └──────────┘  └──────────┘  └──────────────┘   │  │
-│  └───────────────────────────────────────────────────┘  │
-│                                                         │
-│  ┌──────────┐    ┌──────────┐    ┌──────────────────┐  │
-│  │   LLM    │    │  OUTPUT  │    │    EVALUATOR     │  │
-│  │ Provider │    │ Formatter│    │  (self-critique) │  │
-│  └──────────┘    └──────────┘    └──────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+```bash
+python -m kame.cli
 ```
 
----
+Or record a custom request in the generated brief:
 
-## 🚀 Demo — Interacción de ejemplo
-
-> ⚠️ Este repositorio contiene una **demo simplificada**. El código de producción es privado.
-
-```python
-from kame import Agent
-
-# Inicializar agente
-agent = Agent(
-    name="KAME",
-    model="gpt-4o",   # o "claude-3-5-sonnet", "ollama/llama3"
-    tools=["web_search", "code_runner", "file_manager"]
-)
-
-# Ejecutar tarea compleja
-result = agent.run(
-    "Analiza las últimas noticias sobre IA, "
-    "resume los 3 puntos más importantes "
-    "y guárdalos en un archivo markdown."
-)
-
-print(result.output)
-# ✅ Tarea completada en 4 pasos
-# 📄 Archivo guardado: resumen_ia_2025.md
+```bash
+python -m kame.cli "Prepare the morning reliability handoff."
 ```
 
-**Flujo de ejecución real:**
-```
-[KAME] 🧠 Planificando tarea...
-  → Paso 1: Buscar noticias recientes sobre IA
-  → Paso 2: Filtrar y analizar resultados
-  → Paso 3: Sintetizar los 3 puntos clave
-  → Paso 4: Escribir y guardar archivo markdown
+Generated artifacts are written to `runs/latest/`:
 
-[KAME] 🔧 Ejecutando: web_search("noticias IA 2025")
-[KAME] 🔧 Ejecutando: code_runner(summarize_articles)
-[KAME] 🔧 Ejecutando: file_manager.write("resumen_ia_2025.md")
-[KAME] ✅ Completado en 12.3s
+```text
+runs/latest/operations-brief.md
+runs/latest/trace.json
 ```
 
----
+An example generated artifact is committed at [docs/sample-operations-brief.md](docs/sample-operations-brief.md).
 
-## 🛠️ Stack Tecnológico
+## Verify
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
-![Anthropic](https://img.shields.io/badge/Anthropic-CC785C?style=flat-square)
-![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+```bash
+python -m unittest discover -s tests -v
+```
 
----
+## Workflow
 
-## 📌 Estado del proyecto
+```text
+Task
+  -> Planner creates a bounded plan
+  -> load_incidents reads validated synthetic JSON
+  -> analyse_incidents prioritises non-resolved work
+  -> write_brief creates Markdown report
+  -> trace.json records the execution
+```
 
-- [x] Core del agente (razonamiento + planificación)
-- [x] Sistema de tool calling
-- [x] Memoria a corto plazo
-- [ ] Memoria persistente entre sesiones (en desarrollo)
-- [ ] Interfaz web de administración
-- [ ] SDK público (próximamente)
+## Engineering Decisions
 
----
+| Decision | Reason | Future extension |
+|---|---|---|
+| Deterministic local workflow | Reviewers can execute and validate behavior without credentials | Add an optional approved model provider for narrative synthesis |
+| Synthetic incident records | Keeps the public repository safe to share | Replace with authenticated incident-system connector |
+| JSON trace beside the report | Makes each action inspectable | Add structured evaluations, retries and observability exports |
 
-## 📬 Contacto
+## Scope Boundary
 
-¿Interesado en KAME para tu empresa o proyecto?
-
-[![Email](https://img.shields.io/badge/kmevi32@gmail.com-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:kmevi32@gmail.com)
-[![LinkedIn](https://img.shields.io/badge/Carlos_Mesa_Viera-0077B5?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/carlosmesaviera)
-
-> 💡 El código fuente completo es **privado**. Este repositorio es una demostración pública de las capacidades del proyecto.
-
-<div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:16213e,100:1a1a2e&height=100&section=footer" width="100%"/>
-</div>
+The private original project is not published here. This repository proves public implementation of planning, data processing, report generation and tracing only; it does not assert external tools, autonomous actions or LLM integration.
