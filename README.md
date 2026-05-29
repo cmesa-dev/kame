@@ -1,75 +1,154 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:164e63&height=190&section=header&text=KAME&fontSize=72&fontColor=67e8f9&animation=fadeIn&fontAlignY=39&desc=Auditable%20Operations%20Workflow%20Demo&descAlignY=57" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=venom&color=0:0f172a,50:164e63,100:0f172a&height=200&section=header&text=KAME&fontSize=80&fontColor=67e8f9&animation=fadeIn&fontAlignY=42&desc=Local-first%20AI%20assistant%20with%20smart%20multi-LLM%20routing&descAlignY=62&descSize=16&descFontColor=94a3b8" width="100%"/>
 </div>
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Workflow-Executable-0891B2?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Public%20Code-Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Inputs-Synthetic%20Only-334155?style=for-the-badge"/>
-</div>
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Ollama-local_first-000000?style=flat-square"/>
+  <img src="https://img.shields.io/badge/OpenAI-GPT--4o-412991?style=flat-square&logo=openai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Gemini-2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Claude-Sonnet_·_Opus-CC785C?style=flat-square"/>
+  <img src="https://img.shields.io/badge/status-active-22c55e?style=flat-square"/>
+</p>
 
-## Problem
+---
 
-Operational teams need concise incident briefings without losing the evidence behind them. KAME is a public, bounded workflow demo that turns a local incident dataset into a prioritised Markdown briefing and a machine-readable execution trace.
+## What is KAME?
 
-This repository does not claim to be an autonomous LLM agent. It demonstrates the deterministic orchestration, tool boundaries and traceability that a broader private automation project can build upon.
+KAME is a terminal-based AI coding assistant that **routes each query to the cheapest capable model automatically** — running local inference first and only escalating to cloud APIs when the task demands it.
 
-## What I Built
+No API key required to start. No cloud bill for simple tasks.
 
-- A Python workflow agent with an explicit three-step plan.
-- A validated synthetic incident source under `examples/`.
-- Real tools for loading data, prioritising active incidents and writing a report.
-- A JSON trace containing every executed step and its result.
-- Unit tests and a GitHub Actions verification workflow.
+---
 
-## Run Locally
+## How routing works
 
-No API keys or third-party packages are required.
+Every message goes through a complexity classifier (levels 1–5) before any model is called:
+
+```
+Your query
+    │
+    ▼
+Complexity analysis  ─────────────────────────────────────────────┐
+    │                                                             │
+    │  Level 1-2 (trivial/fast)                                  │
+    ├──► Ollama local model  ·  3b-ish  ·  free  ·  instant      │
+    │                                                             │
+    │  Level 3-4 (medium / code)                                 │
+    ├──► Ollama 7-14b  ──fail──►  Gemini 2.5 Flash  ──fail──►   │
+    │    GPT-4o-mini                                              │
+    │                                                             │
+    │  Level 5 (architecture / math / reasoning)                 │
+    └──► deepseek-r1 / qwq local  ──fail──►  GPT-4o / Claude    ─┘
+```
+
+If a provider is unavailable or times out, KAME falls back to the next tier silently. Local models are preferred at every level where they are capable enough.
+
+---
+
+## Features
+
+### 🔀 Smart multi-LLM routing
+Detects task complexity and domain (code, web, math, architecture) to pick the right model. Supports Ollama, LM Studio, OpenAI, Gemini and Anthropic in the same session.
+
+### 🧠 Semantic memory
+Conversations are embedded and stored in a local ChromaDB vector database. KAME recalls relevant past context automatically — no manual `/remember` commands needed. Deduplication prevents noise.
+
+### 🛠 Tool use
+KAME executes real tools during reasoning:
+- `read_file` — reads any project file
+- `run_command` — runs shell commands safely
+- `search_code` / `grep_codebase` — regex and ripgrep search across the codebase
+- `web_search` / `web_fetch` — searches and reads URLs
+- `git_status` — shows repo state and diff
+- `list_dir` — navigates the file tree
+- `smart_search` — combines web results with local RAG knowledge
+
+### 🐝 Multi-agent swarm
+Complex architectural tasks spin up a three-role pipeline:
+
+```
+Architect (GPT-4o)  ──►  QA & Security (Gemini)  ──►  Lead Dev (GPT-4o)
+```
+
+Each role sees the previous output and builds on it, producing a final implementation plan with `SEARCH/REPLACE` patches.
+
+### 💸 Cost tracking
+Every cloud API call is tracked. KAME prints session cost on exit so you know exactly what you spent.
+
+### 🔌 Offline-first
+With Ollama installed and any local model pulled, KAME works fully offline. Cloud providers are opt-in.
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Runtime | Python 3.11+ |
+| Local inference | Ollama · LM Studio |
+| Cloud providers | OpenAI · Gemini · Anthropic |
+| Vector memory | ChromaDB |
+| CLI / UI | Typer · Rich · prompt_toolkit |
+| Web tools | urllib (zero dependencies) |
+
+---
+
+## Requirements
 
 ```bash
-python -m kame.cli
+# Local inference (optional but recommended)
+# https://ollama.com — then pull any model:
+ollama pull qwen2.5-coder:7b
+
+# Python dependencies
+pip install kameia
 ```
 
-Or record a custom request in the generated brief:
+Cloud API keys are read from `.env` in the project root:
+
+```env
+OPENAI_API_KEY=...
+GEMINI_API_KEY=...
+ANTHROPIC_API_KEY=...
+```
+
+No key = no cloud calls. KAME stays local.
+
+---
+
+## Usage
 
 ```bash
-python -m kame.cli "Prepare the morning reliability handoff."
+# Start interactive session
+kame
+
+# Ask directly
+kame "Refactor this module to use async/await"
+
+# Force a specific provider
+kame --provider gemini "Explain this regex"
+
+# Multi-agent swarm on a complex task
+kame swarm "Design a rate-limited job queue with retry logic"
 ```
 
-Generated artifacts are written to `runs/latest/`:
+---
 
-```text
-runs/latest/operations-brief.md
-runs/latest/trace.json
-```
+## Status
 
-An example generated artifact is committed at [docs/sample-operations-brief.md](docs/sample-operations-brief.md).
+Private project — actively developed. This repository documents the public interface and architecture. The full source is not published.
 
-## Verify
+---
 
-```bash
-python -m unittest discover -s tests -v
-```
+<p align="center">
+  <a href="https://linkedin.com/in/carlosmesaviera">
+    <img src="https://img.shields.io/badge/Carlos%20Mesa%20Viera-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
+  </a>
+  &nbsp;
+  <a href="https://cmesa-dev.github.io/cv/">
+    <img src="https://img.shields.io/badge/CV-online-6d28d9?style=for-the-badge&logo=read-the-docs&logoColor=white"/>
+  </a>
+</p>
 
-## Workflow
-
-```text
-Task
-  -> Planner creates a bounded plan
-  -> load_incidents reads validated synthetic JSON
-  -> analyse_incidents prioritises non-resolved work
-  -> write_brief creates Markdown report
-  -> trace.json records the execution
-```
-
-## Engineering Decisions
-
-| Decision | Reason | Future extension |
-|---|---|---|
-| Deterministic local workflow | Reviewers can execute and validate behavior without credentials | Add an optional approved model provider for narrative synthesis |
-| Synthetic incident records | Keeps the public repository safe to share | Replace with authenticated incident-system connector |
-| JSON trace beside the report | Makes each action inspectable | Add structured evaluations, retries and observability exports |
-
-## Scope Boundary
-
-The private original project is not published here. This repository proves public implementation of planning, data processing, report generation and tracing only; it does not assert external tools, autonomous actions or LLM integration.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0f172a,100:164e63&height=90&section=footer" width="100%"/>
