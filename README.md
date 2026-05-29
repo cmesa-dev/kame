@@ -159,7 +159,7 @@ KAME es mi primer proyecto serio de IA. Soy desarrollador, no investigador — y
 
 La base está: el analizador de peticiones, el routing, la memoria, las herramientas. Lo que puede hacer una persona sola tiene un límite. Lo que puede hacer una comunidad, no.
 
-Si alguien mejora el router, otro la memoria, otro añade una interfaz mejor o integra un proveedor nuevo — el resultado es un producto que ninguno de nosotros habría construido solo. Un asistente de código open source, mantenido por desarrolladores para desarrolladores, sin suscripciones de por medio.
+Si alguien mejora el router, otro la memoria, otro añade una interfaz mejor o integra un proveedor nuevo — el resultado es un producto que ninguno de nosotros habría construido solo. Un asistente de código open source, mantenido por desarrolladores para desarrolladores — sin suscripciones ni cuotas fijas. Solo pagas el consumo real de API, con cada petición analizada y enrutada por KAME para que el modelo más barato capaz resuelva la tarea: mejor rendimiento, menor coste.
 
 **Si te interesa contribuir, mejorar algo o simplemente seguir el proyecto — bienvenido.**
 
