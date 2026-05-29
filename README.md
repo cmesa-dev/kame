@@ -147,7 +147,21 @@ Sin ninguna clave configurada, KAME corre 100% local.
 
 ---
 
-> Proyecto privado en desarrollo activo. Este repositorio documenta la interfaz pública y la arquitectura del sistema.
+## Estado y hoja de ruta
+
+KAME está en desarrollo activo. **El objetivo es lanzar la primera versión pública antes de agosto de 2026.**
+
+---
+
+## Por qué open source
+
+KAME es mi primer proyecto serio de IA. Soy desarrollador, no investigador — y soy el primero en reconocer que no soy el mejor construyendo sistemas de inteligencia artificial. Pero creo que esa es exactamente la razón para abrirlo.
+
+La base está: el analizador de peticiones, el routing, la memoria, las herramientas. Lo que puede hacer una persona sola tiene un límite. Lo que puede hacer una comunidad, no.
+
+Si alguien mejora el router, otro la memoria, otro añade una interfaz mejor o integra un proveedor nuevo — el resultado es un producto que ninguno de nosotros habría construido solo. Un asistente de código open source, mantenido por desarrolladores para desarrolladores, sin suscripciones de por medio.
+
+**Si te interesa contribuir, mejorar algo o simplemente seguir el proyecto — bienvenido.**
 
 ---
 
