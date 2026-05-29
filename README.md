@@ -1,167 +1,151 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=venom&color=0:0f172a,50:164e63,100:0f172a&height=200&section=header&text=KAME&fontSize=80&fontColor=67e8f9&animation=fadeIn&fontAlignY=42&desc=Tu%20asistente%20de%20código%20que%20siempre%20elige%20el%20modelo%20más%20barato%20capaz%20de%20resolver%20tu%20tarea&descAlignY=63&descSize=13&descFontColor=94a3b8" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=venom&color=0:0f172a,50:164e63,100:0f172a&height=200&section=header&text=KAME&fontSize=80&fontColor=67e8f9&animation=fadeIn&fontAlignY=42&desc=The%20coding%20assistant%20that%20always%20picks%20the%20cheapest%20model%20capable%20of%20solving%20your%20task&descAlignY=63&descSize=13&descFontColor=94a3b8" width="100%"/>
 </div>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Ollama-local_·_gratis-000000?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Ollama-local_·_free-000000?style=flat-square"/>
   <img src="https://img.shields.io/badge/Gemini-2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white"/>
   <img src="https://img.shields.io/badge/GPT--4o-OpenAI-412991?style=flat-square&logo=openai&logoColor=white"/>
   <img src="https://img.shields.io/badge/Claude-Anthropic-CC785C?style=flat-square"/>
-  <img src="https://img.shields.io/badge/estado-activo-22c55e?style=flat-square"/>
+  <img src="https://img.shields.io/badge/status-active-22c55e?style=flat-square"/>
+  <br/>
+  <a href="README.es.md">🇪🇸 Español</a>
 </p>
 
 ---
 
-## El problema
+## The Problem
 
-Tienes suscripciones a varios modelos de IA pero acabas usando siempre el más caro por comodidad, aunque tu tarea sea trivial. Un "hola" le cuesta lo mismo que un refactor complejo.
+You have subscriptions to several AI models but end up using the most expensive one out of habit, even for trivial tasks. A simple "hello" costs the same as a full refactor.
 
-**KAME resuelve esto.** Analiza cada petición antes de enviarla y decide automáticamente cuál es el modelo más barato capaz de responderla bien.
+**KAME solves this.** It analyses every request before sending it and automatically decides which is the cheapest model capable of handling it well.
 
 ---
 
-## Cómo funciona el analizador
+## How the Analyser Works
 
-Antes de hacer ninguna llamada, KAME descompone tu petición en señales:
+Before making any call, KAME breaks your request into signals:
 
 ```
-"implementa JWT con refresh tokens, blacklist Redis y tests para FastAPI"
+"implement JWT with refresh tokens, Redis blacklist and tests for FastAPI"
          │
          ▼
    parse_query()  ──► intent: generate · domain: backend · modifiers: production
          │
-   semantic_triage()  ──► nivel 5 / Arquitectura crítica
-         │
-   detect_domain()  ──► BACKEND
+   semantic_triage()  ──► level 5 / Critical architecture
          │
          ▼
-   Resultado: GPT-4o  (único nivel capaz de resolverlo bien)
+   Result: GPT-4o  (the only level capable of solving it well)
 ```
 
 ```
-"qué tiempo hace en Sevilla?"
+"what's the weather in Seville?"
          │
          ▼
-   intent: search · nivel 1 / Charla trivial
+   intent: search · level 1 / Trivial query
          │
          ▼
-   Resultado: Gemini Flash  (suficiente, ~100× más barato)
+   Result: Gemini Flash  (sufficient, ~100× cheaper)
 ```
 
 ```
-"hola"  ──►  nivel 1  ──►  Ollama local  (coste: 0 €)
+"hi"  ──►  level 1  ──►  Local Ollama  (cost: $0)
 ```
 
-Sin configuración manual. Sin `/model gpt-4o` antes de cada mensaje. El nivel correcto de potencia para cada tarea.
+No manual configuration. No `/model gpt-4o` before every message. The right level of power for each task.
 
 ---
 
-## Niveles de routing
+## Routing Levels
 
-| Nivel | Tipo de tarea | Modelo elegido |
+| Level | Task type | Chosen model |
 |:---:|---|---|
-| 1 | Saludo, consulta trivial | Ollama local · gratis |
-| 2 | Pregunta rápida, explicación corta | Ollama local / Gemini Flash |
-| 3 | Edición estándar, refactor puntual | Gemini Flash |
-| 4 | Bug complejo, debug profundo | GPT-4o-mini / GPT-4o |
-| 5 | Arquitectura, seguridad, multiarchivo | GPT-4o / Claude Sonnet/Opus |
+| 1 | Greeting, trivial query | Local Ollama · free |
+| 2 | Quick question, short explanation | Local Ollama / Gemini Flash |
+| 3 | Standard editing, minor refactor | Gemini Flash |
+| 4 | Complex bug, deep debugging | GPT-4o-mini / GPT-4o |
+| 5 | Architecture, security, multi-file | GPT-4o / Claude Sonnet/Opus |
 
-Los modelos locales (Ollama, LM Studio) tienen siempre preferencia si son capaces. La API solo se usa cuando el problema lo requiere.
+Local models (Ollama, LM Studio) are always preferred when capable. The API is only used when the problem requires it.
 
 ---
 
-## Más que un router
+## More Than a Router
 
-### 🛠 Herramientas reales
-KAME lee tu proyecto, ejecuta comandos y busca en la web durante el razonamiento:
-
+### 🛠 Real Tools
+KAME reads your project, executes commands and searches the web during reasoning:
 ```
 read_file · run_command · search_code · grep_codebase
 web_search · web_fetch · git_status · list_dir
 ```
 
-### 🧠 Memoria semántica entre sesiones
-Cada conversación queda vectorizada en ChromaDB local. KAME recuerda decisiones anteriores y las recupera automáticamente cuando son relevantes — sin que tengas que repetirte.
+### 🧠 Semantic Memory Across Sessions
+Every conversation is vectorised locally in ChromaDB. KAME remembers previous decisions and retrieves them automatically when relevant — without you repeating yourself.
 
-### 🐝 Modo Swarm
-Para tareas de arquitectura, tres agentes colaboran en pipeline:
-
+### 🐝 Swarm Mode
+For architecture tasks, three agents collaborate in a pipeline:
 ```
-Arquitecto (GPT-4o)  →  QA & Seguridad (Gemini)  →  Lead Dev (GPT-4o)
+Architect (GPT-4o)  →  QA & Security (Gemini)  →  Lead Dev (GPT-4o)
 ```
+Each role critiques the previous one. The result is an implementation plan with directly applicable `SEARCH/REPLACE` blocks.
 
-Cada rol critica al anterior. El resultado es un plan de implementación con bloques `SEARCH/REPLACE` aplicables directamente.
-
-### 💸 Tracking de coste
-Cada llamada a la nube registra tokens y coste en USD. Al cerrar la sesión ves exactamente cuánto has gastado.
+### 💸 Cost Tracking
+Every cloud call records tokens and cost in USD. When you close the session you see exactly how much you spent.
 
 ---
 
-## Comandos principales
+## Main Commands
 
 ```bash
-kame chat                    # Sesión interactiva
-kame ask "explica este bug"  # Consulta rápida sobre el proyecto
-kame route "tu petición"     # Muestra qué modelo usaría y por qué
-kame budget                  # Estado de todos los backends disponibles
-kame agent "tarea"           # Agente: planifica, lee el repo y propone cambios
-kame swarm "tarea compleja"  # Pipeline Arquitecto → QA → Coder
-kame work "tarea"            # Bucle autónomo hasta que los tests pasen
-kame status                  # Git status del proyecto
+kame chat                    # Interactive session
+kame ask "explain this bug"  # Quick query about the project
+kame route "your request"    # Shows which model would be used and why
+kame budget                  # Status of all available backends
+kame agent "task"            # Agent: plans, reads the repo and proposes changes
+kame swarm "complex task"    # Pipeline Architect → QA → Coder
+kame work "task"             # Autonomous loop until tests pass
 ```
 
 ---
 
-## Stack
-
-| Capa | Tecnología |
-|---|---|
-| Inferencia local | Ollama · LM Studio |
-| Cloud | OpenAI · Gemini · Anthropic |
-| Memoria vectorial | ChromaDB |
-| CLI / UI | Typer · Rich · prompt_toolkit |
-| Búsqueda web | urllib (sin dependencias extra) |
-
----
-
-## Inicio rápido
+## Quick Start
 
 ```bash
-# Inferencia local (recomendado, sin coste)
+# Local inference (recommended, no cost)
 ollama pull qwen2.5-coder:7b
 
-# Instalar KAME
+# Install KAME
 pip install kameia
 
-# Claves cloud opcionales en .env
+# Optional cloud keys in .env
 OPENAI_API_KEY=...
 GEMINI_API_KEY=...
 ANTHROPIC_API_KEY=...
 
-# Arrancar
+# Start
 kame chat
 ```
 
-Sin ninguna clave configurada, KAME corre 100% local.
+With no keys configured, KAME runs 100% locally.
 
 ---
 
-## Estado y hoja de ruta
+## Status & Roadmap
 
-KAME está en desarrollo activo. **El objetivo es lanzar la primera versión pública antes de agosto de 2026.**
+KAME is under active development. **The goal is to release the first public version before August 2026.**
 
 ---
 
-## Por qué open source
+## Why Open Source
 
-KAME es mi primer proyecto serio de IA. Soy desarrollador, no investigador — y soy el primero en reconocer que no soy el mejor construyendo sistemas de inteligencia artificial. Pero creo que esa es exactamente la razón para abrirlo.
+KAME is my first serious AI project. I'm a developer, not a researcher — and I'm the first to admit I'm not the best at building AI systems. But I think that's exactly the reason to open it up.
 
-La base está: el analizador de peticiones, el routing, la memoria, las herramientas. Lo que puede hacer una persona sola tiene un límite. Lo que puede hacer una comunidad, no.
+The foundation is there: the request analyser, the routing, the memory, the tools. What one person can do alone has a limit. What a community can do, doesn't.
 
-Si alguien mejora el router, otro la memoria, otro añade una interfaz mejor o integra un proveedor nuevo — el resultado es un producto que ninguno de nosotros habría construido solo. Un asistente de código open source, mantenido por desarrolladores para desarrolladores — sin suscripciones ni cuotas fijas. Solo pagas el consumo real de API, con cada petición analizada y enrutada por KAME para que el modelo más barato capaz resuelva la tarea: mejor rendimiento, menor coste.
+If someone improves the router, another the memory, another adds a better interface or integrates a new provider — the result is a product none of us would have built alone. An open-source coding assistant, maintained by developers for developers — no fixed subscriptions or fees. You only pay your real API consumption, with each request analysed and routed by KAME so the cheapest capable model resolves the task: better performance, lower cost.
 
-**Si te interesa contribuir, mejorar algo o simplemente seguir el proyecto — bienvenido.**
+**If you're interested in contributing, improving something, or simply following the project — you're welcome.**
 
 ---
 
