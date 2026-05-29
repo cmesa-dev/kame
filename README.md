@@ -1,153 +1,171 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=venom&color=0:0f172a,50:164e63,100:0f172a&height=200&section=header&text=KAME&fontSize=80&fontColor=67e8f9&animation=fadeIn&fontAlignY=42&desc=Local-first%20AI%20assistant%20with%20smart%20multi-LLM%20routing&descAlignY=62&descSize=16&descFontColor=94a3b8" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=venom&color=0:0f172a,50:164e63,100:0f172a&height=200&section=header&text=KAME&fontSize=80&fontColor=67e8f9&animation=fadeIn&fontAlignY=42&desc=Tu%20asistente%20de%20código%20que%20siempre%20elige%20el%20modelo%20más%20barato%20capaz%20de%20resolver%20tu%20tarea&descAlignY=63&descSize=13&descFontColor=94a3b8" width="100%"/>
 </div>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Ollama-local_first-000000?style=flat-square"/>
-  <img src="https://img.shields.io/badge/OpenAI-GPT--4o-412991?style=flat-square&logo=openai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Ollama-local_·_gratis-000000?style=flat-square"/>
   <img src="https://img.shields.io/badge/Gemini-2.5_Flash-4285F4?style=flat-square&logo=google&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Claude-Sonnet_·_Opus-CC785C?style=flat-square"/>
-  <img src="https://img.shields.io/badge/status-active-22c55e?style=flat-square"/>
+  <img src="https://img.shields.io/badge/GPT--4o-OpenAI-412991?style=flat-square&logo=openai&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Claude-Anthropic-CC785C?style=flat-square"/>
+  <img src="https://img.shields.io/badge/estado-activo-22c55e?style=flat-square"/>
 </p>
 
 ---
 
-## What is KAME?
+## El problema
 
-KAME is a terminal-based AI coding assistant that **routes each query to the cheapest capable model automatically** — running local inference first and only escalating to cloud APIs when the task demands it.
+Tienes suscripciones a varios modelos de IA pero acabas usando siempre el más caro por comodidad, aunque tu tarea sea trivial. Un "hola" le cuesta lo mismo que un refactor complejo.
 
-No API key required to start. No cloud bill for simple tasks.
-
----
-
-## How routing works
-
-Every message goes through a complexity classifier (levels 1–5) before any model is called:
-
-```
-Your query
-    │
-    ▼
-Complexity analysis  ─────────────────────────────────────────────┐
-    │                                                             │
-    │  Level 1-2 (trivial/fast)                                  │
-    ├──► Ollama local model  ·  3b-ish  ·  free  ·  instant      │
-    │                                                             │
-    │  Level 3-4 (medium / code)                                 │
-    ├──► Ollama 7-14b  ──fail──►  Gemini 2.5 Flash  ──fail──►   │
-    │    GPT-4o-mini                                              │
-    │                                                             │
-    │  Level 5 (architecture / math / reasoning)                 │
-    └──► deepseek-r1 / qwq local  ──fail──►  GPT-4o / Claude    ─┘
-```
-
-If a provider is unavailable or times out, KAME falls back to the next tier silently. Local models are preferred at every level where they are capable enough.
+**KAME resuelve esto.** Analiza cada petición antes de enviarla y decide automáticamente cuál es el modelo más barato capaz de responderla bien.
 
 ---
 
-## Features
+## Cómo funciona el analizador
 
-### 🔀 Smart multi-LLM routing
-Detects task complexity and domain (code, web, math, architecture) to pick the right model. Supports Ollama, LM Studio, OpenAI, Gemini and Anthropic in the same session.
-
-### 🧠 Semantic memory
-Conversations are embedded and stored in a local ChromaDB vector database. KAME recalls relevant past context automatically — no manual `/remember` commands needed. Deduplication prevents noise.
-
-### 🛠 Tool use
-KAME executes real tools during reasoning:
-- `read_file` — reads any project file
-- `run_command` — runs shell commands safely
-- `search_code` / `grep_codebase` — regex and ripgrep search across the codebase
-- `web_search` / `web_fetch` — searches and reads URLs
-- `git_status` — shows repo state and diff
-- `list_dir` — navigates the file tree
-- `smart_search` — combines web results with local RAG knowledge
-
-### 🐝 Multi-agent swarm
-Complex architectural tasks spin up a three-role pipeline:
+Antes de hacer ninguna llamada, KAME descompone tu petición en señales:
 
 ```
-Architect (GPT-4o)  ──►  QA & Security (Gemini)  ──►  Lead Dev (GPT-4o)
+"implementa JWT con refresh tokens, blacklist Redis y tests para FastAPI"
+         │
+         ▼
+   parse_query()  ──► intent: generate · domain: backend · modifiers: production
+         │
+   semantic_triage()  ──► nivel 5 / Arquitectura crítica
+         │
+   detect_domain()  ──► BACKEND
+         │
+         ▼
+   Resultado: GPT-4o  (único nivel capaz de resolverlo bien)
 ```
 
-Each role sees the previous output and builds on it, producing a final implementation plan with `SEARCH/REPLACE` patches.
+```
+"qué tiempo hace en Sevilla?"
+         │
+         ▼
+   intent: search · nivel 1 / Charla trivial
+         │
+         ▼
+   Resultado: Gemini Flash  (suficiente, ~100× más barato)
+```
 
-### 💸 Cost tracking
-Every cloud API call is tracked. KAME prints session cost on exit so you know exactly what you spent.
+```
+"hola"  ──►  nivel 1  ──►  Ollama local  (coste: 0 €)
+```
 
-### 🔌 Offline-first
-With Ollama installed and any local model pulled, KAME works fully offline. Cloud providers are opt-in.
+Sin configuración manual. Sin `/model gpt-4o` antes de cada mensaje. El nivel correcto de potencia para cada tarea.
+
+---
+
+## Niveles de routing
+
+| Nivel | Tipo de tarea | Modelo elegido |
+|:---:|---|---|
+| 1 | Saludo, consulta trivial | Ollama local · gratis |
+| 2 | Pregunta rápida, explicación corta | Ollama local / Gemini Flash |
+| 3 | Edición estándar, refactor puntual | Gemini Flash |
+| 4 | Bug complejo, debug profundo | GPT-4o-mini / GPT-4o |
+| 5 | Arquitectura, seguridad, multiarchivo | GPT-4o / Claude Sonnet/Opus |
+
+Los modelos locales (Ollama, LM Studio) tienen siempre preferencia si son capaces. La API solo se usa cuando el problema lo requiere.
+
+---
+
+## Más que un router
+
+### 🛠 Herramientas reales
+KAME lee tu proyecto, ejecuta comandos y busca en la web durante el razonamiento:
+
+```
+read_file · run_command · search_code · grep_codebase
+web_search · web_fetch · git_status · list_dir
+```
+
+### 🧠 Memoria semántica entre sesiones
+Cada conversación queda vectorizada en ChromaDB local. KAME recuerda decisiones anteriores y las recupera automáticamente cuando son relevantes — sin que tengas que repetirte.
+
+### 🐝 Modo Swarm
+Para tareas de arquitectura, tres agentes colaboran en pipeline:
+
+```
+Arquitecto (GPT-4o)  →  QA & Seguridad (Gemini)  →  Lead Dev (GPT-4o)
+```
+
+Cada rol critica al anterior. El resultado es un plan de implementación con bloques `SEARCH/REPLACE` aplicables directamente.
+
+### 💸 Tracking de coste
+Cada llamada a la nube registra tokens y coste en USD. Al cerrar la sesión ves exactamente cuánto has gastado.
+
+---
+
+## Comandos principales
+
+```bash
+kame chat                    # Sesión interactiva
+kame ask "explica este bug"  # Consulta rápida sobre el proyecto
+kame route "tu petición"     # Muestra qué modelo usaría y por qué
+kame budget                  # Estado de todos los backends disponibles
+kame agent "tarea"           # Agente: planifica, lee el repo y propone cambios
+kame swarm "tarea compleja"  # Pipeline Arquitecto → QA → Coder
+kame work "tarea"            # Bucle autónomo hasta que los tests pasen
+kame status                  # Git status del proyecto
+```
 
 ---
 
 ## Stack
 
-| Layer | Technology |
+| Capa | Tecnología |
 |---|---|
-| Runtime | Python 3.11+ |
-| Local inference | Ollama · LM Studio |
-| Cloud providers | OpenAI · Gemini · Anthropic |
-| Vector memory | ChromaDB |
+| Inferencia local | Ollama · LM Studio |
+| Cloud | OpenAI · Gemini · Anthropic |
+| Memoria vectorial | ChromaDB |
 | CLI / UI | Typer · Rich · prompt_toolkit |
-| Web tools | urllib (zero dependencies) |
+| Búsqueda web | urllib (sin dependencias extra) |
 
 ---
 
-## Requirements
+## Inicio rápido
 
 ```bash
-# Local inference (optional but recommended)
-# https://ollama.com — then pull any model:
+# Inferencia local (recomendado, sin coste)
 ollama pull qwen2.5-coder:7b
 
-# Python dependencies
+# Instalar KAME
 pip install kameia
-```
 
-Cloud API keys are read from `.env` in the project root:
-
-```env
+# Claves cloud opcionales en .env
 OPENAI_API_KEY=...
 GEMINI_API_KEY=...
 ANTHROPIC_API_KEY=...
+
+# Arrancar
+kame chat
 ```
 
-No key = no cloud calls. KAME stays local.
+Sin ninguna clave configurada, KAME corre 100% local.
 
 ---
 
-## Usage
-
-```bash
-# Start interactive session
-kame
-
-# Ask directly
-kame "Refactor this module to use async/await"
-
-# Force a specific provider
-kame --provider gemini "Explain this regex"
-
-# Multi-agent swarm on a complex task
-kame swarm "Design a rate-limited job queue with retry logic"
-```
-
----
-
-## Status
-
-Private project — actively developed. This repository documents the public interface and architecture. The full source is not published.
+> Proyecto privado en desarrollo activo. Este repositorio documenta la interfaz pública y la arquitectura del sistema.
 
 ---
 
 <p align="center">
-  <a href="https://linkedin.com/in/carlosmesaviera">
+  <a href="https://www.linkedin.com/in/carlos-mesa-viera-747501197">
     <img src="https://img.shields.io/badge/Carlos%20Mesa%20Viera-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white"/>
   </a>
   &nbsp;
-  <a href="https://cmesa-dev.github.io/cv/">
-    <img src="https://img.shields.io/badge/CV-online-6d28d9?style=for-the-badge&logo=read-the-docs&logoColor=white"/>
+  <a href="https://github.com/cmesa-dev">
+    <img src="https://img.shields.io/badge/cmesa--dev-GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  &nbsp;
+  <a href="https://cmesa-dev.github.io/cv/es.html">
+    <img src="https://img.shields.io/badge/CV-Español-6d28d9?style=for-the-badge&logo=read-the-docs&logoColor=white"/>
+  </a>
+  &nbsp;
+  <a href="https://cmesa-dev.github.io/cv/index.html">
+    <img src="https://img.shields.io/badge/CV-English-6d28d9?style=for-the-badge&logo=read-the-docs&logoColor=white"/>
   </a>
 </p>
 
